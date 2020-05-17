@@ -1,5 +1,6 @@
 import argparse
 import json
+from random import choice, random, randrange
 
 VOWELS = ['A', 'E', 'I', 'O', 'U', 'Y']
 CONSONANT_PAIRS = [ ['B', 'V'], ['V', 'W'], ['W', 'R'],
@@ -9,6 +10,32 @@ OTHER_CONSONANTS = ['D', 'F', 'H', 'J', 'L', 'P', 'Q', 'T', 'X', 'Y', 'Z']
 
 user_vowels = []
 user_consonants = []
+
+def generate_word():
+    length = randrange(2,10)
+    word = []
+    curr = 0
+    first_letter = choice(user_alphabet)
+    prev_letter = first_letter
+    word.append(first_letter)
+    while curr <= length:
+        repeat_chance = random()
+        if prev_letter in VOWELS:
+            repeat_type = repeat_chance > 0.9
+            if repeat_type:
+                next_letter = choice(user_vowels)
+            else:
+                next_letter = choice(user_consonants)
+        else:
+            repeat_type = repeat_chance > 0.75
+            if repeat_type:
+                next_letter = choice(user_consonants)
+            else:
+                next_letter = choice(user_vowels)
+        word.append(next_letter)
+        prev_letter = next_letter
+        curr = len(word)
+    print(''.join(word).lower(), end=' ')
 
 parser = argparse.ArgumentParser(description="Generate fantasy names and words.")
 parser.add_argument('-f', '--file', nargs='?', type=argparse.FileType('r'))
@@ -43,3 +70,7 @@ else:
 
 user_alphabet.sort()
 print(f"Here is your alphabet: {user_alphabet}")
+cont = input("Do you want to generate words now? [Y/n] ").upper()
+while cont != 'N' and cont != 'QUIT':
+    generate_word()
+    cont = input("").upper()
